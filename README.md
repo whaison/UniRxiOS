@@ -1,12 +1,12 @@
-UniRx - Reactive Extensions for Unity
+UniRxiOS - Reactive Extensions for Unity5.1.1 Testing iPhone6 iOS (8.1) this is not original "UniRx"
 ===
-Created by Yoshifumi Kawai(neuecc)
+Created by Yoshifumi Kawai(neuecc) = > Editing Noboru Otsuka(whaison)
 
 [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/neuecc/UniRx?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
 What is UniRx?
 ---
-UniRx (Reactive Extensions for Unity) is a reimplementation of the .NET Reactive Extensions. The Official Rx implementation is great but doesn't work on Unity and has issues with iOS AOT compatibility. This library fixes those issues and adds some specific utilities for Unity. Supported platforms are PC/Mac/Android/iOS/WP8/WindowsStore/etc and the library is fully supported on both Unity 5 and 4.6.   
+UniRx (Reactive Extensions for Unity) is a reimplementation of the .NET Reactive Extensions. The Official Rx implementation is great but doesn't work on Unity and has issues with iOS AOT compatibility. This library fixes those issues and adds some specific utilities for Unity. Supported platforms are PC/Mac/Android/iOS/WP8/WindowsStore/etc and the library is fully supported on both Unity 5 and 4.6.
 
 UniRx is available on the Unity Asset Store (FREE) - http://u3d.as/content/neuecc/uni-rx-reactive-extensions-for-unity/7tT
 
@@ -16,7 +16,7 @@ Support thread on the Unity Forums: Ask me any question - http://forum.unity3d.c
 
 Release Notes, see [UniRx/releases](https://github.com/neuecc/UniRx/releases)
 
-UniRx is Core Library (Port of Rx) + Platform Adaptor (MainThreadScheduler/FromCoroutine/etc) + Framework (ObservableTriggers/ReactiveProeperty/PresenterBase/etc) 
+UniRx is Core Library (Port of Rx) + Platform Adaptor (MainThreadScheduler/FromCoroutine/etc) + Framework (ObservableTriggers/ReactiveProeperty/PresenterBase/etc)
 
 Why Rx?
 ---
@@ -27,14 +27,14 @@ Ordinarily, Network operations in Unity require the use of `WWW` and `Coroutine`
 
 This kind of lack of composability causes operations to be close-coupled, which often results in huge monolithic IEnumerators.
 
-Rx cures that kind of "asynchronous blues". Rx is a library for composing asynchronous and event-based programs using observable collections and LINQ-style query operators. 
-  
+Rx cures that kind of "asynchronous blues". Rx is a library for composing asynchronous and event-based programs using observable collections and LINQ-style query operators.
+
 The game loop (every Update, OnCollisionEnter, etc), sensor data (Kinect, Leap Motion, etc.) are all types of events. Rx represents events as reactive sequences which are both easily composable and support time-based operations by using LINQ query operators.
 
 Unity is generally single threaded but UniRx facilitates multithreading for joins, cancels, accessing GameObjects, etc.
 
-UniRx helps UI programming with uGUI. All UI events (clicked, valuechanged, etc) can be converted to UniRx event streams. 
-        
+UniRx helps UI programming with uGUI. All UI events (clicked, valuechanged, etc) can be converted to UniRx event streams.
+
 
 Introduction
 ---
@@ -56,7 +56,7 @@ This example demonstrates the following features (in only five lines!):
 * The game loop (Update) as an event stream
 * Composable event streams
 * Merging self stream
-* Easy handling of time based operations   
+* Easy handling of time based operations
 
 Network operations
 ---
@@ -158,7 +158,7 @@ IEnumerator AsyncB()
 // main code
 // Observable.FromCoroutine converts IEnumerator to Observable<Unit>.
 // You can also use the shorthand, AsyncA().ToObservable()
-        
+
 // after AsyncA completes, run AsyncB as a continuous routine.
 // UniRx expands SelectMany(IEnumerator) as SelectMany(IEnumerator.ToObservable())
 var cancel = Observable.FromCoroutine(AsyncA)
@@ -180,7 +180,7 @@ public static IObservable<string> GetWWW(string url)
 }
 
 // IObserver is a callback publisher
-// Note: IObserver's basic scheme is "OnNext* (OnError | Oncompleted)?" 
+// Note: IObserver's basic scheme is "OnNext* (OnError | Oncompleted)?"
 static IEnumerator GetWWWCore(string url, IObserver<string> observer, CancellationToken cancellationToken)
 {
     var www = new UnityEngine.WWW(url);
@@ -263,7 +263,7 @@ Observable.WhenAll(heavyMethod, heavyMethod2)
         // Unity can't touch GameObject from other thread
         // but use ObserveOnMainThread, you can touch GameObject naturally.
         (GameObject.Find("myGuiText")).guiText.text = xs[0] + ":" + xs[1];
-    }); 
+    });
 ```
 
 DefaultScheduler
@@ -445,7 +445,7 @@ this.gameObject.OnMouseDownAsObservable()
     .TakeUntil(this.gameObject.OnMouseUpAsObservable())
     .Select(_ => Input.mousePosition)
     .RepeatUntilDestroy(this) // safety way
-    .Subscribe(x => Debug.Log(x));            
+    .Subscribe(x => Debug.Log(x));
 ```
 
 All class instances provide an `ObserveEveryValueChanged` method, which watches for changing values every frame:
@@ -548,14 +548,14 @@ Unity-specific Extra Gems
 ---
 ```csharp
 // Unity's singleton UiThread Queue Scheduler
-Scheduler.MainThreadScheduler 
+Scheduler.MainThreadScheduler
 ObserveOnMainThread()/SubscribeOnMainThread()
 
 // Global StartCoroutine runner
 MainThreadDispatcher.StartCoroutine(enumerator)
 
 // convert Coroutine to IObservable
-Observable.FromCoroutine((observer, token) => enumerator(observer, token)); 
+Observable.FromCoroutine((observer, token) => enumerator(observer, token));
 
 // convert IObservable to Coroutine
 yield return Observable.Range(1, 10).StartAsCoroutine();
@@ -570,7 +570,7 @@ Framecount-based time operators
 ---
 UniRx provides a few framecount-based time operators:
 
-Method | 
+Method |
 -------|
 EveryUpdate|
 EveryFixedUpdate|
@@ -601,7 +601,7 @@ public Button MyButton;
 MyButton.onClick.AsObservable().Subscribe(_ => Debug.Log("clicked"));
 ```
 
-Treating Events as Observables enables declarative UI programming. 
+Treating Events as Observables enables declarative UI programming.
 
 ```csharp
 public Toggle MyToggle;
@@ -615,20 +615,20 @@ void Start()
     // Toggle, Input etc as Observable (OnValueChangedAsObservable is a helper providing isOn value on subscribe)
     // SubscribeToInteractable is an Extension Method, same as .interactable = x)
     MyToggle.OnValueChangedAsObservable().SubscribeToInteractable(MyButton);
-    
+
     // Input is displayed after a 1 second delay
     MyInput.OnValueChangeAsObservable()
         .Where(x => x != null)
         .Delay(TimeSpan.FromSeconds(1))
         .SubscribeToText(MyText); // SubscribeToText is helper for subscribe to text
-    
+
     // Converting for human readability
     MySlider.OnValueChangedAsObservable()
         .SubscribeToText(MyText, x => Math.Round(x, 2).ToString());
 }
 ```
 
-For more on reactive UI programming please consult Sample12, Sample13 and the ReactiveProperty section below. 
+For more on reactive UI programming please consult Sample12, Sample13 and the ReactiveProperty section below.
 
 ReactiveProperty, ReactiveCollection
 ---
@@ -723,7 +723,7 @@ UniRx makes it possible to implement the MVP(MVRP) Pattern.
 
 ![](StoreDocument/MVP_Pattern.png)
 
-Why should we use MVP instead of MVVM? Unity doesn't provide a UI binding mechanism and creating a binding layer is too complex and loss and affects performance. Still, Views need updating. Presenters are aware of their view's components and can update them. Although there is no real binding, Observables enables subscription to notification, which can act much like the real thing. This pattern is called a Reactive Presenter: 
+Why should we use MVP instead of MVVM? Unity doesn't provide a UI binding mechanism and creating a binding layer is too complex and loss and affects performance. Still, Views need updating. Presenters are aware of their view's components and can update them. Although there is no real binding, Observables enables subscription to notification, which can act much like the real thing. This pattern is called a Reactive Presenter:
 
 ```csharp
 // Presenter for scene(canvas) root.
@@ -732,13 +732,13 @@ public class ReactivePresenter : MonoBehaviour
     // Presenter is aware of its View (binded in the inspector)
     public Button MyButton;
     public Toggle MyToggle;
-    
+
     // State-Change-Events from Model by ReactiveProperty
     Enemy enemy = new Enemy(1000);
 
     void Start()
     {
-        // Rx supplies user events from Views and Models in a reactive manner 
+        // Rx supplies user events from Views and Models in a reactive manner
         MyButton.OnClickAsObservable().Subscribe(_ => enemy.CurrentHp.Value -= 99);
         MyToggle.OnValueChangedAsObservable().SubscribeToInteractable(MyButton);
 
@@ -772,7 +772,7 @@ A View is a scene, that is a Unity hierarchy. Views are associated with Presente
 
 ![](StoreDocument/MVRP_Loop.png)
 
-V -> RP -> M -> RP -> V completely connected in a reactive way. UniRx provides all of the adaptor methods and classes, but other MVVM(or MV*) frameworks can be used instead. UniRx/ReactiveProperty is only simple toolkit. 
+V -> RP -> M -> RP -> V completely connected in a reactive way. UniRx provides all of the adaptor methods and classes, but other MVVM(or MV*) frameworks can be used instead. UniRx/ReactiveProperty is only simple toolkit.
 
 GUI programming also benefits from ObservableTriggers. ObservableTriggers convert Unity events to Observables, so the MV(R)P pattern can be composed using them. For example, `ObservableEventTrigger` converts uGUI events to Observable:
 
@@ -790,16 +790,16 @@ PresenterBase
 UI has hierarchy and maybe contains a few presenters. But Unity's script execution order is indeterminate in default, so you can't touch child presenter's property before child has been initialized. And sometimes ReactiveProperty requires initial value but Unity doesn't have constructor.  `PresenterBase` solves there two problems.
 
 * Resolve initialize dependency of multiple presenters chain
-* Passing initial argument like constructor 
+* Passing initial argument like constructor
 
 ```csharp
 // If Presenter receive argument inherit PresenterBase<T> otherwise inherit PresenterBase
 public class CharacterPresenter : PresenterBase<int>
-{    
+{
     // attach from inspector
     public WeaponPresenter WeaponPresenter;
     public StatusPresenter StatusPresenter;
-    
+
     // model field
     private Character character;
 
@@ -808,7 +808,7 @@ public class CharacterPresenter : PresenterBase<int>
     {
         get
         {
-            // If children is empty, you can write `return EmptyChildren;` 
+            // If children is empty, you can write `return EmptyChildren;`
             return new IPresenter[] { WeaponPresenter, StatusPresenter };
         }
     }
@@ -818,7 +818,7 @@ public class CharacterPresenter : PresenterBase<int>
     protected override void BeforeInitialize(int argument)
     {
         var characterId = argument;
-        character = new Character(characterId); // set up character...        
+        character = new Character(characterId); // set up character...
 
         // Pass argument to children, call PropagateArgument method
         WeaponPresenter.PropagateArgument(character.Weapon);
@@ -831,7 +831,7 @@ public class CharacterPresenter : PresenterBase<int>
     {
         StatusPresenter.StatusChanged.Subscribe(x =>
         {
-            WeaponPresenter.Weapon.Power.Fix(x.power); 
+            WeaponPresenter.Weapon.Power.Fix(x.power);
         });
     }
 }
@@ -839,7 +839,7 @@ public class CharacterPresenter : PresenterBase<int>
 
 PresenterBase has three phases.
 
-1. In Awake - Resolve parent-child dependency using Children proeperty. 
+1. In Awake - Resolve parent-child dependency using Children proeperty.
 2. In Start - Perent to Children, propagete value phase.
 3. In Start - Children to Parent, initialize phase.
 
@@ -894,7 +894,7 @@ Therefore, when using NETFX_CORE, please refrain from using such constructs as `
 Reference
 ---
 * [RxJava Wiki](https://github.com/Netflix/RxJava/wiki)
- 
+
 This wiki is a great way for learn Rx. All operators are illustrated with graphical marble diagrams, which makes them easy to understand.
 
 * [Reactive Game Architectures](http://sugarpillstudios.com/wp/?page_id=279)
@@ -936,7 +936,7 @@ Author Info
 ---
 Yoshifumi Kawai(a.k.a. neuecc) is a software developer in Japan.
 He is the Director/CTO at Grani, Inc.
-Grani is a top social game developer in Japan. 
+Grani is a top social game developer in Japan.
 He was awarded Microsoft MVP for Visual C# in 2011.
 He is known as the creator of [linq.js](http://linqjs.codeplex.com/)(LINQ to Objects for JavaScript)
 
